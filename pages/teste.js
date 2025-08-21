@@ -68,17 +68,17 @@ export default function Home() {
       fontFamily: "'Montserrat', sans-serif",
       backgroundColor: "#0f172a",
       color: "#e2e8f0",
-      padding: "20px 10px",
+      padding: "clamp(15px, 5vw, 20px)",
       minHeight: "100vh",
       boxSizing: "border-box",
     },
     container: {
-      maxWidth: "1100px",
+      maxWidth: "min(1100px, 95vw)",
       margin: "0 auto",
-      padding: "0 10px",
+      padding: "0 clamp(5px, 2vw, 10px)",
     },
     headerH1: {
-      fontSize: "clamp(2em, 8vw, 2.5em)",
+      fontSize: "clamp(2em, 7vw, 2.5em)",
       fontWeight: 700,
       backgroundImage: "linear-gradient(45deg, #06b6d4, #3b82f6)",
       WebkitBackgroundClip: "text",
@@ -87,64 +87,70 @@ export default function Home() {
       textAlign: "center",
     },
     headerP: {
-      fontSize: "clamp(1em, 4vw, 1.1em)",
+      fontSize: "clamp(0.9em, 4vw, 1.1em)",
       color: "#93c5fd",
       textAlign: "center",
     },
     card: {
       backgroundColor: "#1e293b",
       borderRadius: "12px",
-      padding: "20px",
+      padding: "clamp(15px, 4vw, 20px)",
       boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-      marginBottom: "20px",
+      marginBottom: "clamp(15px, 4vw, 20px)",
       transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    },
+    tableContainer: {
+      overflowX: "auto",
+      margin: "0 auto",
+      width: "100%",
+      maxWidth: "100%",
     },
     table: {
       width: "100%",
       borderCollapse: "collapse",
-      marginTop: "15px",
-      overflowX: "auto",
-      display: "block",
+      marginTop: "clamp(10px, 3vw, 15px)",
     },
     th: {
-      textAlign: "left",
-      padding: "10px",
+      textAlign: "center",
+      padding: "clamp(8px, 2vw, 10px)",
       borderBottom: "1px solid #334155",
       backgroundColor: "#0f172a",
       color: "#06b6d4",
       textTransform: "uppercase",
-      fontSize: "clamp(0.8em, 3vw, 0.9em)",
+      fontSize: "clamp(0.75em, 2.5vw, 0.85em)",
     },
     td: {
-      padding: "10px",
+      textAlign: "center",
+      padding: "clamp(8px, 2vw, 10px)",
       borderBottom: "1px solid #334155",
-      fontSize: "clamp(0.8em, 3vw, 0.9em)",
+      fontSize: "clamp(0.75em, 2.5vw, 0.85em)",
     },
     chartContainer: {
-      width: "clamp(200px, 60vw, 250px)",
-      height: "clamp(200px, 60vw, 250px)",
-      margin: "20px auto",
+      width: "clamp(180px, 60vw, 250px)",
+      height: "clamp(180px, 60vw, 250px)",
+      margin: "clamp(15px, 4vw, 20px) auto",
     },
     disclaimer: {
-      fontSize: "clamp(0.8em, 3vw, 0.9em)",
+      fontSize: "clamp(0.75em, 2.5vw, 0.85em)",
       color: "#94a3b8",
       fontStyle: "italic",
       textAlign: "center",
-      marginTop: "20px",
+      marginTop: "clamp(15px, 4vw, 20px)",
     },
     btn: {
       background: "linear-gradient(45deg, #06b6d4, #3b82f6)",
       color: "#0f172a",
       fontWeight: "bold",
-      padding: "12px 24px",
+      padding: "clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px)",
       border: "none",
       borderRadius: "50px",
       cursor: "pointer",
       textDecoration: "none",
       display: "inline-block",
-      marginTop: "30px",
+      margin: "clamp(20px, 5vw, 30px) auto",
       transition: "transform 0.2s ease, box-shadow 0.2s ease",
-      fontSize: "clamp(0.9em, 4vw, 1em)",
+      fontSize: "clamp(0.85em, 3vw, 0.95em)",
+      textAlign: "center",
     },
     btnHover: {
       transform: "scale(1.05)",
@@ -153,35 +159,36 @@ export default function Home() {
     resultsTable: {
       width: "100%",
       borderCollapse: "collapse",
-      marginTop: "15px",
-      overflowX: "auto",
-      display: "block",
+      marginTop: "clamp(10px, 3vw, 15px)",
     },
   };
 
-  // Inline styles for mobile responsiveness using media queries
+  // Inline styles for mobile responsiveness
   const mobileStyles = `
     @media (max-width: 768px) {
       .main-content {
         grid-template-columns: 1fr !important;
-        gap: 15px !important;
+        gap: clamp(10px, 3vw, 15px) !important;
       }
       .card {
-        padding: 15px !important;
+        padding: clamp(10px, 3vw, 15px) !important;
       }
-      .table {
-        font-size: 0.8em !important;
+      .table, .resultsTable {
+        font-size: clamp(0.7em, 2.2vw, 0.8em) !important;
       }
       .th, .td {
-        padding: 8px !important;
+        padding: clamp(6px, 1.5vw, 8px) !important;
       }
       .chartContainer {
         width: 80vw !important;
         height: 80vw !important;
       }
       .btn {
-        padding: 10px 20px !important;
-        font-size: 0.9em !important;
+        padding: clamp(8px, 2.5vw, 10px) clamp(15px, 4vw, 20px) !important;
+        font-size: clamp(0.8em, 2.5vw, 0.9em) !important;
+      }
+      .container {
+        max-width: 95vw !important;
       }
     }
   `;
@@ -190,29 +197,29 @@ export default function Home() {
     <>
       <style>{mobileStyles}</style>
       <div style={styles.root}>
-        <div style={styles.container}>
-          <header style={{ textAlign: "center", marginBottom: "30px" }}>
+        <div style={styles.container} className="container">
+          <header style={{ textAlign: "center", marginBottom: "clamp(20px, 5vw, 30px)" }}>
             <h1 style={styles.headerH1}>HODL - Fundo Cripto 🚀</h1>
             <p style={styles.headerP}>Alocação estratégica de portfólio para o mercado de criptomoedas.</p>
           </header>
 
-          <div className="main-content" style={{ display: "grid", gridTemplateColumns: "1fr", gap: "20px" }}>
+          <div className="main-content" style={{ display: "grid", gridTemplateColumns: "1fr", gap: "clamp(15px, 4vw, 20px)" }}>
             <div style={{ ...styles.card, gridColumn: "1 / -1", textAlign: "center" }}>
-              <h2 style={{ color: "#06b6d4", fontSize: "clamp(1.2em, 5vw, 1.5em)" }}>Distribuição do Portfólio</h2>
+              <h2 style={{ color: "#06b6d4", fontSize: "clamp(1.1em, 4vw, 1.4em)" }}>Distribuição do Portfólio</h2>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <div style={styles.chartContainer} className="chartContainer">
                   <canvas id="portfolioChart"></canvas>
                 </div>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0, textAlign: "left", marginLeft: "20px" }}>
-                  <li style={{ position: "relative", paddingLeft: "25px", marginBottom: "8px", fontSize: "clamp(0.8em, 3vw, 0.9em)" }}>
+                <ul style={{ listStyle: "none", padding: 0, margin: 0, textAlign: "left", marginLeft: "clamp(15px, 4vw, 20px)" }}>
+                  <li style={{ position: "relative", paddingLeft: "25px", marginBottom: "8px", fontSize: "clamp(0.75em, 2.5vw, 0.85em)" }}>
                     <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "15px", height: "15px", borderRadius: "3px", backgroundColor: "#4CAF50" }}></span>
                     70% - Maiores Criptomoedas do Mercado
                   </li>
-                  <li style={{ position: "relative", paddingLeft: "25px", marginBottom: "8px", fontSize: "clamp(0.8em, 3vw, 0.9em)" }}>
+                  <li style={{ position: "relative", paddingLeft: "25px", marginBottom: "8px", fontSize: "clamp(0.75em, 2.5vw, 0.85em)" }}>
                     <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "15px", height: "15px", borderRadius: "3px", backgroundColor: "#FFC107" }}></span>
                     20% - Maiores Memecoins do Mercado
                   </li>
-                  <li style={{ position: "relative", paddingLeft: "25px", marginBottom: "8px", fontSize: "clamp(0.8em, 3vw, 0.9em)" }}>
+                  <li style={{ position: "relative", paddingLeft: "25px", marginBottom: "8px", fontSize: "clamp(0.75em, 2.5vw, 0.85em)" }}>
                     <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "15px", height: "15px", borderRadius: "3px", backgroundColor: "#E91E63" }}></span>
                     10% - Criptomoedas Novas / Comunidade
                   </li>
@@ -221,8 +228,8 @@ export default function Home() {
             </div>
 
             <div style={styles.card}>
-              <h2 style={{ fontSize: "clamp(1.2em, 5vw, 1.5em)" }}>🏆 Top Criptomoedas (70% Alocação)</h2>
-              <div style={{ overflowX: "auto" }}>
+              <h2 style={{ fontSize: "clamp(1.1em, 4vw, 1.4em)", textAlign: "center" }}>🏆 Top Criptomoedas (70% Alocação)</h2>
+              <div style={styles.tableContainer}>
                 <table style={styles.table} className="table">
                   <thead>
                     <tr>
@@ -240,7 +247,7 @@ export default function Home() {
                           <td style={styles.td}>{m.nome} ({m.simbolo})</td>
                           <td style={styles.td}>
                             <span style={{ color: "#ffffff" }}>💲 {m.preco_atual_usd.toFixed(4)}</span> |{" "}
-                            <span style={{ color: "#000000" }}>Qtde: {m.quantidade}</span> |{" "}
+                            <span style={{ color: "#d1d5db" }}>Qtde: {m.quantidade}</span> |{" "}
                             <span style={{ color: "#4CAF50" }}>Total: 💲{total}</span>
                           </td>
                         </tr>
@@ -252,8 +259,8 @@ export default function Home() {
             </div>
 
             <div style={styles.card}>
-              <h2 style={{ fontSize: "clamp(1.2em, 5vw, 1.5em)" }}>🐶 Maiores Memecoins (20% Alocação)</h2>
-              <div style={{ overflowX: "auto" }}>
+              <h2 style={{ fontSize: "clamp(1.1em, 4vw, 1.4em)", textAlign: "center" }}>🐶 Maiores Memecoins (20% Alocação)</h2>
+              <div style={styles.tableContainer}>
                 <table style={styles.table} className="table">
                   <thead>
                     <tr>
@@ -271,7 +278,7 @@ export default function Home() {
                           <td style={styles.td}>{m.nome} ({m.simbolo})</td>
                           <td style={styles.td}>
                             <span style={{ color: "#ffffff" }}>💲 {m.preco_atual_usd.toFixed(8)}</span> |{" "}
-                            <span style={{ color: "#000000" }}>Qtde: {m.quantidade}</span> |{" "}
+                            <span style={{ color: "#d1d5db" }}>Qtde: {m.quantidade}</span> |{" "}
                             <span style={{ color: "#4CAF50" }}>Total: 💲{total}</span>
                           </td>
                         </tr>
@@ -283,8 +290,8 @@ export default function Home() {
             </div>
 
             <div style={{ ...styles.card, gridColumn: "1 / -1" }}>
-              <h2 style={{ color: "#06b6d4", fontSize: "clamp(1.2em, 5vw, 1.5em)" }}>Resumo Mensal</h2>
-              <div style={{ overflowX: "auto" }}>
+              <h2 style={{ color: "#06b6d4", fontSize: "clamp(1.1em, 4vw, 1.4em)", textAlign: "center" }}>Resumo Mensal</h2>
+              <div style={styles.tableContainer}>
                 <table style={styles.resultsTable} className="table">
                   <thead>
                     <tr>
@@ -332,7 +339,7 @@ export default function Home() {
             VERIFICAR ALOCAÇÃO EM TEMPO REAL
           </a>
 
-          <footer style={{ marginTop: "30px", textAlign: "center", fontSize: "clamp(0.75em, 3vw, 0.85em)", color: "#64748b" }}>
+          <footer style={{ marginTop: "clamp(20px, 5vw, 30px)", textAlign: "center", fontSize: "clamp(0.7em, 2.5vw, 0.8em)", color: "#64748b" }}>
             &copy; 2025 HODL. Todos os direitos reservados.
           </footer>
         </div>

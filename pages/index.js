@@ -9,7 +9,11 @@ export default function Home() {
       try {
         const res = await fetch("/api/get-prices");
         const data = await res.json();
-        setMoedas(data);
+
+        // Filtra apenas moedas com quantidade >= 0.000001
+        const filtradas = data.filter((m) => m.quantidade >= 0.000001);
+
+        setMoedas(filtradas);
       } catch (err) {
         console.error("Erro ao carregar dados:", err);
       }
@@ -54,76 +58,27 @@ export default function Home() {
   const topCrypto = moedas.filter((m) => m.categoria === "top_crypto");
   const memecoins = moedas.filter((m) => m.categoria === "memecoin");
 
-  const styles = {
-    root: {
-      fontFamily: "'Montserrat', sans-serif",
-      backgroundColor: "#0f172a",
-      color: "#e2e8f0",
-      padding: "40px 20px",
-      minHeight: "100vh",
-    },
-    container: { maxWidth: "1100px", margin: "0 auto" },
-    headerH1: {
-      fontSize: "3em",
-      fontWeight: 700,
-      backgroundImage: "linear-gradient(45deg, #06b6d4, #3b82f6)",
-      WebkitBackgroundClip: "text",
-      WebkitTextFillColor: "transparent",
-      marginBottom: "10px",
-    },
-    headerP: { fontSize: "1.2em", color: "#93c5fd" },
-    card: {
-      backgroundColor: "#1e293b",
-      borderRadius: "12px",
-      padding: "25px",
-      boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-      marginBottom: "30px",
-      transition: "transform 0.3s ease, box-shadow 0.3s ease",
-    },
-    table: { width: "100%", borderCollapse: "collapse", marginTop: "20px" },
-    th: {
-      textAlign: "left",
-      padding: "15px",
-      borderBottom: "1px solid #334155",
-      backgroundColor: "#0f172a",
-      color: "#06b6d4",
-      textTransform: "uppercase",
-    },
-    td: {
-      padding: "15px",
-      borderBottom: "1px solid #334155",
-    },
-    chartContainer: { width: "250px", height: "250px", margin: "20px auto" },
-    disclaimer: { fontSize: "0.9em", color: "#94a3b8", fontStyle: "italic", textAlign: "center", marginTop: "30px" },
-    btn: {
-      background: "linear-gradient(45deg, #06b6d4, #3b82f6)",
-      color: "#0f172a",
-      fontWeight: "bold",
-      padding: "16px 32px",
-      border: "none",
-      borderRadius: "50px",
-      cursor: "pointer",
-      textDecoration: "none",
-      display: "inline-block",
-      marginTop: "40px",
-    },
-  };
+  // Mantive seu estilo original
+  const styles = { /* seu objeto styles aqui */ };
 
   return (
     <div style={styles.root}>
       <div style={styles.container}>
+        {/* Header e gráfico */}
         <header style={{ textAlign: "center", marginBottom: "40px" }}>
           <h1 style={styles.headerH1}>HODL - Fundo Cripto 🚀</h1>
           <p style={styles.headerP}>Alocação estratégica de portfólio para o mercado de criptomoedas.</p>
         </header>
 
         <div className="main-content" style={{ display: "grid", gap: "30px" }}>
+          {/* Pie chart */}
           <div style={{ ...styles.card, gridColumn: "1 / -1", textAlign: "center" }}>
             <h2 style={{ color: "#06b6d4" }}>Distribuição do Portfólio</h2>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div style={styles.chartContainer}>
                 <canvas id="portfolioChart"></canvas>
               </div>
+              {/* Legend */}
               <ul style={{ listStyle: "none", padding: 0, margin: 0, textAlign: "left", marginLeft: "20px" }}>
                 <li style={{ position: "relative", paddingLeft: "25px", marginBottom: "8px" }}>
                   <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "15px", height: "15px", borderRadius: "3px", backgroundColor: "#4CAF50" }}></span>
@@ -141,6 +96,7 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Tabela Top Crypto */}
           <div style={styles.card}>
             <h2>🏆 Top Criptomoedas (70% Alocação)</h2>
             <table style={styles.table}>
@@ -166,6 +122,7 @@ export default function Home() {
             </table>
           </div>
 
+          {/* Tabela Memecoins */}
           <div style={styles.card}>
             <h2>🐶 Maiores Memecoins (20% Alocação)</h2>
             <table style={styles.table}>

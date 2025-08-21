@@ -1,46 +1,29 @@
 import { PrismaClient } from "@prisma/client";
-
 const prisma = new PrismaClient();
 
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Método não permitido" });
-  }
-
+async function atualizarPrecos() {
   try {
-    // Lista de símbolos que estão no seu banco
-    const symbols = "BTC,ETH,BNB,SOL,XRP,TON,ADA,AVAX,DOGE,DOT,SHIB,PEPE,FLOKI,BONK,BABYDOGE,ELON,VOLT,BITCOIN,KISHU";
+    const moedas = await prisma.moeda.findMany();
+    const symbols = moedas.map(m => m.simbolo).join(',');
 
-    const response = await fetch(
-      `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${symbols}`,
-      {
-        headers: {
-          "X-CMC_PRO_API_KEY": process.env.API_COINMARKETCAP,
-        },
-      }
-    );
-
+    const response = await fetch(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${symbols}`, {
+      headers: { "X-CMC_PRO_API_KEY": process.env.API_COINMARKETCAP }
+    });
     const data = await response.json();
+    if (!data.data) throw new Error("Erro ao buscar dados da CMC");
 
-    if (!data.data) {
-      throw new Error("Erro ao puxar dados da CoinMarketCap");
-    }
-
-    // Atualiza no banco cada símbolo
-    const updates = Object.keys(data.data).map(async (symbol) => {
-      const price = data.data[symbol].quote.USD.price;
-
-      return prisma.moeda.updateMany({
-        where: { simbolo: symbol },
-        data: { preco_atual_usd: price },
-      });
+    const updates = Object.keys(data.data).map(symbol => {
+      const preco = data.data[symbol].quote.USD.price;
+      return prisma.moeda.updateMany({ where: { simbolo: symbol }, data: { preco_atual_usd: preco } });
     });
 
     await Promise.all(updates);
-
-    return res.status(200).json({ success: true, updated: updates.length });
-  } catch (error) {
-    console.error("Erro update-prices:", error);
-    return res.status(500).json({ error: "Erro ao atualizar preços" });
+    console.log("Preços atualizados com sucesso!");
+    process.exit(0);
+  } catch (err) {
+    console.error("Erro ao atualizar preços:", err);
+    process.exit(1);
   }
 }
+
+atualizarPrecos();

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function Admin() {
   const [moedas, setMoedas] = useState([]);
-  const [novaMoeda, setNovaMoeda] = useState({ nome: "", simbolo: "", categoria: "top_crypto", quantidade: 0 });
+  const [novaMoeda, setNovaMoeda] = useState({ nome: "", simbolo: "", categoria: "top_crypto", quantidade: 0.000001 });
 
   useEffect(() => {
     async function carregarMoedas() {
@@ -14,7 +14,6 @@ export default function Admin() {
         console.error("Erro ao carregar moedas:", err);
       }
     }
-
     carregarMoedas();
   }, []);
 
@@ -26,7 +25,12 @@ export default function Admin() {
       await fetch("/api/update-moeda", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(moeda),
+        body: JSON.stringify({
+          id: moeda.id,
+          nome: moeda.nome,
+          simbolo: moeda.simbolo,
+          quantidade: parseFloat(moeda.quantidade),
+        }),
       });
       alert("Moeda atualizada!");
     } catch (err) {
@@ -36,6 +40,10 @@ export default function Admin() {
   };
 
   const adicionarMoeda = async () => {
+    if (novaMoeda.quantidade < 0.000001) {
+      alert("Quantidade mínima é 0.000001");
+      return;
+    }
     try {
       const res = await fetch("/api/add-moeda", {
         method: "POST",
@@ -43,9 +51,11 @@ export default function Admin() {
         body: JSON.stringify(novaMoeda),
       });
       const data = await res.json();
-      setMoedas((prev) => [...prev, data]);
-      setNovaMoeda({ nome: "", simbolo: "", categoria: "top_crypto", quantidade: 0 });
-      alert("Nova moeda adicionada!");
+      if (data.moeda) {
+        setMoedas((prev) => [...prev, data.moeda]);
+        setNovaMoeda({ nome: "", simbolo: "", categoria: "top_crypto", quantidade: 0.000001 });
+        alert("Nova moeda adicionada!");
+      }
     } catch (err) {
       console.error("Erro ao adicionar moeda:", err);
       alert("Erro ao adicionar moeda.");
@@ -141,7 +151,7 @@ export default function Admin() {
                     <input style={styles.input} value={m.simbolo} onChange={(e) => handleChange(m.id, "simbolo", e.target.value)} />
                   </td>
                   <td style={styles.td}>
-                    <input type="number" style={styles.input} value={m.quantidade} onChange={(e) => handleChange(m.id, "quantidade", e.target.value)} />
+                    <input type="number" style={styles.input} value={m.quantidade} onChange={(e) => handleChange(m.id, "quantidade", parseFloat(e.target.value))} />
                   </td>
                   <td style={styles.td}>
                     <button style={styles.button} onClick={() => atualizarMoeda(m.id)}>Salvar</button>

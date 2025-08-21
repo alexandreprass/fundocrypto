@@ -17,27 +17,33 @@ export default function Admin() {
     carregarMoedas();
   }, []);
 
-  const atualizarMoeda = async (id, nome, simbolo, quantidade) => {
+  const atualizarMoeda = async (id) => {
+    const moeda = moedas.find((m) => m.id === id);
+    if (!moeda) return;
+
     try {
-      // Atualiza nome e símbolo
-      await fetch("/api/update-nome-simbolo", {
+      // Atualiza nome, símbolo e quantidade de uma vez
+      await fetch("/api/update-moeda", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, nome, simbolo }),
+        body: JSON.stringify({
+          id,
+          nome: moeda.nome,
+          simbolo: moeda.simbolo,
+          quantidade: moeda.quantidade,
+        }),
       });
-
-      // Atualiza quantidade
-      await fetch("/api/update-quantidade", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, quantidade }),
-      });
-
       alert("Moeda atualizada!");
     } catch (err) {
       console.error("Erro ao atualizar moeda:", err);
       alert("Erro ao atualizar moeda.");
     }
+  };
+
+  const handleChange = (id, field, value) => {
+    setMoedas((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, [field]: value } : m))
+    );
   };
 
   const styles = {
@@ -69,34 +75,23 @@ export default function Admin() {
               </tr>
             </thead>
             <tbody>
-              {moedas.map((m, i) => {
-                const [nome, setNome] = useState(m.nome);
-                const [simbolo, setSimbolo] = useState(m.simbolo);
-                const [quantidade, setQuantidade] = useState(m.quantidade);
-
-                return (
-                  <tr key={m.id}>
-                    <td style={styles.td}>{i + 1}</td>
-                    <td style={styles.td}>
-                      <input style={styles.input} value={nome} onChange={(e) => setNome(e.target.value)} />
-                    </td>
-                    <td style={styles.td}>
-                      <input style={styles.input} value={simbolo} onChange={(e) => setSimbolo(e.target.value)} />
-                    </td>
-                    <td style={styles.td}>
-                      <input type="number" style={styles.input} value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
-                    </td>
-                    <td style={styles.td}>
-                      <button
-                        style={styles.button}
-                        onClick={() => atualizarMoeda(m.id, nome, simbolo, quantidade)}
-                      >
-                        Salvar
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {moedas.map((m, i) => (
+                <tr key={m.id}>
+                  <td style={styles.td}>{i + 1}</td>
+                  <td style={styles.td}>
+                    <input style={styles.input} value={m.nome} onChange={(e) => handleChange(m.id, "nome", e.target.value)} />
+                  </td>
+                  <td style={styles.td}>
+                    <input style={styles.input} value={m.simbolo} onChange={(e) => handleChange(m.id, "simbolo", e.target.value)} />
+                  </td>
+                  <td style={styles.td}>
+                    <input type="number" style={styles.input} value={m.quantidade} onChange={(e) => handleChange(m.id, "quantidade", e.target.value)} />
+                  </td>
+                  <td style={styles.td}>
+                    <button style={styles.button} onClick={() => atualizarMoeda(m.id)}>Salvar</button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

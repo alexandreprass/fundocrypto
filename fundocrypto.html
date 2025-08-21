@@ -235,21 +235,10 @@
                         <tr>
                             <th>#</th>
                             <th>Criptomoeda</th>
-                            <th>Alocação (%)</th>
+                            <th>Dados</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr><td>1</td><td>Bitcoin (BTC)</td><td>0%</td></tr>
-                        <tr><td>2</td><td>Ethereum (ETH)</td><td>0%</td></tr>
-                        <tr><td>3</td><td>BNB (BNB)</td><td>0%</td></tr>
-                        <tr><td>4</td><td>Solana (SOL)</td><td>0%</td></tr>
-                        <tr><td>5</td><td>XRP (XRP)</td><td>0%</td></tr>
-                        <tr><td>6</td><td>Toncoin (TON)</td><td>0%</td></tr>
-                        <tr><td>7</td><td>Cardano (ADA)</td><td>0%</td></tr>
-                        <tr><td>8</td><td>Avalanche (AVAX)</td><td>0%</td></tr>
-                        <tr><td>9</td><td>Dogecoin (DOGE)</td><td>0%</td></tr>
-                        <tr><td>10</td><td>Polkadot (DOT)</td><td>0%</td></tr>
-                    </tbody>
+                    <tbody id="top-crypto-table"></tbody>
                 </table>
             </div>
 
@@ -260,21 +249,10 @@
                         <tr>
                             <th>#</th>
                             <th>Memecoin</th>
-                            <th>Alocação (%)</th>
+                            <th>Dados</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr><td>1</td><td>Dogecoin (DOGE)</td><td>0%</td></tr>
-                        <tr><td>2</td><td>Shiba Inu (SHIB)</td><td>0%</td></tr>
-                        <tr><td>3</td><td>Pepe (PEPE)</td><td>0%</td></tr>
-                        <tr><td>4</td><td>Floki Inu (FLOKI)</td><td>0%</td></tr>
-                        <tr><td>5</td><td>Bonk (BONK)</td><td>0%</td></tr>
-                        <tr><td>6</td><td>Baby Doge Coin</td><td>0%</td></tr>
-                        <tr><td>7</td><td>Dogelon Mars (ELON)</td><td>0%</td></tr>
-                        <tr><td>8</td><td>Volt Inu (VOLT)</td><td>0%</td></tr>
-                        <tr><td>9</td><td>HarryPotterObamaSonic10Inu</td><td>0%</td></tr>
-                        <tr><td>10</td><td>Kishu Inu (KISHU)</td><td>0%</td></tr>
-                    </tbody>
+                    <tbody id="memecoin-table"></tbody>
                 </table>
             </div>
         </div>
@@ -342,6 +320,49 @@
                 }
             }
         });
+
+        async function carregarDados() {
+            try {
+                const res = await fetch("/api/get-prices");
+                const moedas = await res.json();
+
+                const topCrypto = moedas.filter(m => m.categoria === "top_crypto");
+                const memecoins = moedas.filter(m => m.categoria === "memecoin");
+
+                const topTable = document.getElementById("top-crypto-table");
+                const memeTable = document.getElementById("memecoin-table");
+
+                topTable.innerHTML = "";
+                memeTable.innerHTML = "";
+
+                topCrypto.forEach((m, i) => {
+                    const valorTotal = (m.preco_atual_usd * m.quantidade).toFixed(2);
+                    topTable.innerHTML += `
+                        <tr>
+                          <td>${i + 1}</td>
+                          <td>${m.nome} (${m.simbolo})</td>
+                          <td>💲 ${m.preco_atual_usd.toFixed(4)} | Qtde: ${m.quantidade} | Total: 💲${valorTotal}</td>
+                        </tr>
+                    `;
+                });
+
+                memecoins.forEach((m, i) => {
+                    const valorTotal = (m.preco_atual_usd * m.quantidade).toFixed(2);
+                    memeTable.innerHTML += `
+                        <tr>
+                          <td>${i + 1}</td>
+                          <td>${m.nome} (${m.simbolo})</td>
+                          <td>💲 ${m.preco_atual_usd.toFixed(8)} | Qtde: ${m.quantidade} | Total: 💲${valorTotal}</td>
+                        </tr>
+                    `;
+                });
+
+            } catch (err) {
+                console.error("Erro ao carregar dados:", err);
+            }
+        }
+
+        window.onload = carregarDados;
     </script>
 </body>
 </html>

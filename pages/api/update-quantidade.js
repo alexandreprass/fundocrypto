@@ -6,17 +6,17 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Método não permitido" });
   }
 
-  const { id, quantidade } = req.body;
+  const { id, nome, simbolo, quantidade } = req.body;
 
   try {
     const moeda = await prisma.moeda.update({
       where: { id: id },
-      data: { quantidade },
+      data: { nome, simbolo, quantidade },
     });
 
     res.status(200).json(moeda);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao atualizar quantidade" });
+    res.status(500).json({ error: "Erro ao atualizar moeda" });
   }
 }

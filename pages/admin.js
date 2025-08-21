@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 
 export default function Admin() {
   const [moedas, setMoedas] = useState([]);
-  const [novoNome, setNovoNome] = useState("");
-  const [novoSimbolo, setNovoSimbolo] = useState("");
-  const [novaCategoria, setNovaCategoria] = useState("top_crypto");
 
   useEffect(() => {
     async function carregarMoedas() {
@@ -16,120 +13,94 @@ export default function Admin() {
         console.error("Erro ao carregar moedas:", err);
       }
     }
+
     carregarMoedas();
   }, []);
 
-  async function atualizarQuantidade(id, quantidade) {
+  const atualizarMoeda = async (id, nome, simbolo, quantidade) => {
     try {
-      const res = await fetch("/api/update-quantidade", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, quantidade }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setMoedas((old) =>
-          old.map((m) =>
-            m.id === id ? { ...m, quantidade: parseFloat(quantidade) } : m
-          )
-        );
-      }
-    } catch (err) {
-      console.error("Erro ao atualizar quantidade:", err);
-    }
-  }
-
-  async function atualizarNomeSimbolo(id, nome, simbolo) {
-    try {
-      const res = await fetch("/api/update-nome-simbolo", {
+      // Atualiza nome e símbolo
+      await fetch("/api/update-nome-simbolo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, nome, simbolo }),
       });
-      const data = await res.json();
-      if (data.success) {
-        setMoedas((old) =>
-          old.map((m) =>
-            m.id === id ? { ...m, nome, simbolo } : m
-          )
-        );
-      }
-    } catch (err) {
-      console.error("Erro ao atualizar nome/símbolo:", err);
-    }
-  }
 
-  async function adicionarMoeda() {
-    if (!novoNome || !novoSimbolo) return alert("Nome e símbolo são obrigatórios");
-    try {
-      const res = await fetch("/api/add-moeda", {
+      // Atualiza quantidade
+      await fetch("/api/update-quantidade", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome: novoNome, simbolo: novoSimbolo, categoria: novaCategoria }),
+        body: JSON.stringify({ id, quantidade }),
       });
-      const data = await res.json();
-      if (data.success) {
-        setMoedas((old) => [...old, data.moeda]);
-        setNovoNome("");
-        setNovoSimbolo("");
-      }
+
+      alert("Moeda atualizada!");
     } catch (err) {
-      console.error("Erro ao adicionar moeda:", err);
+      console.error("Erro ao atualizar moeda:", err);
+      alert("Erro ao atualizar moeda.");
     }
-  }
+  };
+
+  const styles = {
+    root: { fontFamily: "'Montserrat', sans-serif", backgroundColor: "#0f172a", color: "#e2e8f0", padding: "40px 20px", minHeight: "100vh" },
+    container: { maxWidth: "1100px", margin: "0 auto" },
+    headerH1: { fontSize: "2.5em", fontWeight: 700, marginBottom: "20px" },
+    table: { width: "100%", borderCollapse: "collapse", marginTop: "20px" },
+    th: { textAlign: "left", padding: "15px", borderBottom: "1px solid #334155", color: "#06b6d4", textTransform: "uppercase" },
+    td: { padding: "10px", borderBottom: "1px solid #334155" },
+    input: { padding: "6px 10px", borderRadius: "6px", border: "1px solid #334155", backgroundColor: "#1e293b", color: "#e2e8f0" },
+    button: { padding: "6px 12px", borderRadius: "6px", background: "linear-gradient(45deg, #06b6d4, #3b82f6)", color: "#0f172a", border: "none", cursor: "pointer" },
+    card: { backgroundColor: "#1e293b", borderRadius: "12px", padding: "25px", boxShadow: "0 10px 25px rgba(0,0,0,0.2)", marginBottom: "30px" }
+  };
 
   return (
-    <div style={{ padding: "40px", fontFamily: "'Montserrat', sans-serif", backgroundColor: "#0f172a", color: "#e2e8f0", minHeight: "100vh" }}>
-      <h1>Admin - HODL Fundo Cripto</h1>
+    <div style={styles.root}>
+      <div style={styles.container}>
+        <h1 style={styles.headerH1}>Admin - Gerenciar Moedas</h1>
 
-      <h2>Inserir nova moeda</h2>
-      <input placeholder="Nome" value={novoNome} onChange={(e) => setNovoNome(e.target.value)} />
-      <input placeholder="Símbolo" value={novoSimbolo} onChange={(e) => setNovoSimbolo(e.target.value)} />
-      <select value={novaCategoria} onChange={(e) => setNovaCategoria(e.target.value)}>
-        <option value="top_crypto">Top Crypto</option>
-        <option value="memecoin">Memecoin</option>
-        <option value="nova">Nova/Comunidade</option>
-      </select>
-      <button onClick={adicionarMoeda}>Adicionar</button>
+        <div style={styles.card}>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>#</th>
+                <th style={styles.th}>Nome</th>
+                <th style={styles.th}>Símbolo</th>
+                <th style={styles.th}>Quantidade</th>
+                <th style={styles.th}>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {moedas.map((m, i) => {
+                const [nome, setNome] = useState(m.nome);
+                const [simbolo, setSimbolo] = useState(m.simbolo);
+                const [quantidade, setQuantidade] = useState(m.quantidade);
 
-      <h2>Editar moedas existentes</h2>
-      <table style={{ width: "100%", marginTop: "20px", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Símbolo</th>
-            <th>Quantidade</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {moedas.map((m) => (
-            <tr key={m.id}>
-              <td>{m.id}</td>
-              <td>
-                <input
-                  value={m.nome}
-                  onChange={(e) => atualizarNomeSimbolo(m.id, e.target.value, m.simbolo)}
-                />
-              </td>
-              <td>
-                <input
-                  value={m.simbolo}
-                  onChange={(e) => atualizarNomeSimbolo(m.id, m.nome, e.target.value)}
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  value={m.quantidade}
-                  onChange={(e) => atualizarQuantidade(m.id, e.target.value)}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                return (
+                  <tr key={m.id}>
+                    <td style={styles.td}>{i + 1}</td>
+                    <td style={styles.td}>
+                      <input style={styles.input} value={nome} onChange={(e) => setNome(e.target.value)} />
+                    </td>
+                    <td style={styles.td}>
+                      <input style={styles.input} value={simbolo} onChange={(e) => setSimbolo(e.target.value)} />
+                    </td>
+                    <td style={styles.td}>
+                      <input type="number" style={styles.input} value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
+                    </td>
+                    <td style={styles.td}>
+                      <button
+                        style={styles.button}
+                        onClick={() => atualizarMoeda(m.id, nome, simbolo, quantidade)}
+                      >
+                        Salvar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

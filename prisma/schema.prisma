@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Moeda {
+  id             Int      @id @default(autoincrement())
+  nome           String
+  simbolo        String
+  categoria      String
+  preco_atual_usd Float   @default(0)
+  quantidade      Float   @default(0)
+  atualizado_em   DateTime @updatedAt
+}

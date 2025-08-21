@@ -1,70 +1,106 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export default function AdminPage() {
-  const [autenticado, setAutenticado] = useState(false);
-  const [senha, setSenha] = useState("");
+export default function Admin() {
   const [moedas, setMoedas] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [novoNome, setNovoNome] = useState("");
+  const [novoSimbolo, setNovoSimbolo] = useState("");
+  const [novaCategoria, setNovaCategoria] = useState("top_crypto");
 
-  async function carregarMoedas() {
-    const res = await fetch("/api/get-prices");
-    const data = await res.json();
-    setMoedas(data);
-  }
+  useEffect(() => {
+    async function carregarMoedas() {
+      try {
+        const res = await fetch("/api/get-prices");
+        const data = await res.json();
+        setMoedas(data);
+      } catch (err) {
+        console.error("Erro ao carregar moedas:", err);
+      }
+    }
+    carregarMoedas();
+  }, []);
 
-  async function atualizarMoeda(id, nome, simbolo, quantidade) {
+  async function atualizarQuantidade(id, quantidade) {
     try {
-      setLoading(true);
-      await fetch("/api/update-moeda", {
+      const res = await fetch("/api/update-quantidade", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, nome, simbolo, quantidade: parseFloat(quantidade) }),
+        body: JSON.stringify({ id, quantidade }),
       });
-      await carregarMoedas();
+      const data = await res.json();
+      if (data.success) {
+        setMoedas((old) =>
+          old.map((m) =>
+            m.id === id ? { ...m, quantidade: parseFloat(quantidade) } : m
+          )
+        );
+      }
     } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+      console.error("Erro ao atualizar quantidade:", err);
     }
   }
 
-  function autenticar() {
-    if (senha === "Gremio-2025") {
-      setAutenticado(true);
-      carregarMoedas();
-    } else {
-      alert("Senha incorreta!");
+  async function atualizarNomeSimbolo(id, nome, simbolo) {
+    try {
+      const res = await fetch("/api/update-nome-simbolo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, nome, simbolo }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMoedas((old) =>
+          old.map((m) =>
+            m.id === id ? { ...m, nome, simbolo } : m
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar nome/símbolo:", err);
     }
   }
 
-  if (!autenticado) {
-    return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "100px" }}>
-        <h2>🔒 Admin - Fundo Cripto</h2>
-        <input
-          type="password"
-          placeholder="Digite a senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          style={{ padding: "10px", margin: "10px", width: "200px" }}
-        />
-        <button onClick={autenticar} style={{ padding: "10px 20px" }}>Entrar</button>
-      </div>
-    );
+  async function adicionarMoeda() {
+    if (!novoNome || !novoSimbolo) return alert("Nome e símbolo são obrigatórios");
+    try {
+      const res = await fetch("/api/add-moeda", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome: novoNome, simbolo: novoSimbolo, categoria: novaCategoria }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMoedas((old) => [...old, data.moeda]);
+        setNovoNome("");
+        setNovoSimbolo("");
+      }
+    } catch (err) {
+      console.error("Erro ao adicionar moeda:", err);
+    }
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>⚙️ Painel Admin</h2>
-      {loading && <p>Salvando alterações...</p>}
-      <table border="1" cellPadding="10">
+    <div style={{ padding: "40px", fontFamily: "'Montserrat', sans-serif", backgroundColor: "#0f172a", color: "#e2e8f0", minHeight: "100vh" }}>
+      <h1>Admin - HODL Fundo Cripto</h1>
+
+      <h2>Inserir nova moeda</h2>
+      <input placeholder="Nome" value={novoNome} onChange={(e) => setNovoNome(e.target.value)} />
+      <input placeholder="Símbolo" value={novoSimbolo} onChange={(e) => setNovoSimbolo(e.target.value)} />
+      <select value={novaCategoria} onChange={(e) => setNovaCategoria(e.target.value)}>
+        <option value="top_crypto">Top Crypto</option>
+        <option value="memecoin">Memecoin</option>
+        <option value="nova">Nova/Comunidade</option>
+      </select>
+      <button onClick={adicionarMoeda}>Adicionar</button>
+
+      <h2>Editar moedas existentes</h2>
+      <table style={{ width: "100%", marginTop: "20px", borderCollapse: "collapse" }}>
         <thead>
           <tr>
             <th>ID</th>
             <th>Nome</th>
-            <th>Simbolo</th>
+            <th>Símbolo</th>
             <th>Quantidade</th>
-            <th>Ação</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -73,30 +109,22 @@ export default function AdminPage() {
               <td>{m.id}</td>
               <td>
                 <input
-                  type="text"
-                  defaultValue={m.nome}
-                  onBlur={(e) => atualizarMoeda(m.id, e.target.value, m.simbolo, m.quantidade)}
+                  value={m.nome}
+                  onChange={(e) => atualizarNomeSimbolo(m.id, e.target.value, m.simbolo)}
                 />
               </td>
               <td>
                 <input
-                  type="text"
-                  defaultValue={m.simbolo}
-                  onBlur={(e) => atualizarMoeda(m.id, m.nome, e.target.value, m.quantidade)}
+                  value={m.simbolo}
+                  onChange={(e) => atualizarNomeSimbolo(m.id, m.nome, e.target.value)}
                 />
               </td>
               <td>
                 <input
                   type="number"
-                  step="any"
-                  defaultValue={m.quantidade}
-                  onBlur={(e) => atualizarMoeda(m.id, m.nome, m.simbolo, e.target.value)}
+                  value={m.quantidade}
+                  onChange={(e) => atualizarQuantidade(m.id, e.target.value)}
                 />
-              </td>
-              <td>
-                <button onClick={() => atualizarMoeda(m.id, m.nome, m.simbolo, m.quantidade)}>
-                  Salvar
-                </button>
               </td>
             </tr>
           ))}

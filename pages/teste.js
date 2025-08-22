@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Chart from "chart.js/auto";
 import { Chart as ChartJS, registerables } from "chart.js";
-import { FinancialChart } from "@chartjs/chartjs-chart-financial"; // Correção na importação
+import { CandlestickController } from "chartjs-chart-financial";
 
-ChartJS.register(...registerables, FinancialChart);
+ChartJS.register(...registerables, CandlestickController);
 
 export default function Home() {
   const [moedas, setMoedas] = useState([]);
@@ -324,7 +324,7 @@ export default function Home() {
                 <tbody>
                   <tr>
                     <td style={styles.td}>
-                      <span style={{ color: "#ff0000" }}>💲{INVESTMENTO_INICIAL.toFixed(2)}</span>
+                      <span style={{ color: "#ff0000" }}>💲{INVESTIMENTO_INICIAL.toFixed(2)}</span>
                     </td>
                     <td style={styles.td}>
                       <span>💲{valorHoje}</span>

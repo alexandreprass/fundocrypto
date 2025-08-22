@@ -21,15 +21,41 @@ export default function Home() {
 
   useEffect(() => {
     const ctx = document.getElementById("portfolioChart");
-    if (!ctx) return;
+    if (!ctx || !moedas.length) return;
 
+    // Calculate total value for each category
+    const topCryptoValue = moedas
+      .filter((m) => m.categoria === "top_crypto" && m.quantidade > 0)
+      .reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0);
+
+    const memecoinsValue = moedas
+      .filter((m) => m.categoria === "memecoin" && m.quantidade > 0)
+      .reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0);
+
+    const communityValue = moedas
+      .filter((m) => m.categoria === "comunidade" && m.quantidade > 0)
+      .reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0);
+
+    // Total portfolio value
+    const totalValue = topCryptoValue + memecoinsValue + communityValue;
+
+    // Calculate percentages for each category
+    const topCryptoPercentage = totalValue > 0 ? (topCryptoValue / totalValue) * 100 : 0;
+    const memecoinsPercentage = totalValue > 0 ? (memecoinsValue / totalValue) * 100 : 0;
+    const communityPercentage = totalValue > 0 ? (communityValue / totalValue) * 100 : 0;
+
+    // Create the chart
     new Chart(ctx, {
       type: "pie",
       data: {
         labels: ["Top Criptomoedas", "Memecoins", "Criptos Novas/Comunidade"],
         datasets: [
           {
-            data: [70, 20, 10],
+            data: [
+              topCryptoPercentage.toFixed(2),
+              memecoinsPercentage.toFixed(2),
+              communityPercentage.toFixed(2),
+            ],
             backgroundColor: ["#4CAF50", "#FFC107", "#E91E63"],
             borderColor: ["#1e293b", "#1e293b", "#1e293b"],
             borderWidth: 2,
@@ -45,12 +71,15 @@ export default function Home() {
             backgroundColor: "rgba(30, 41, 59, 0.9)",
             titleColor: "#e2e8f0",
             bodyColor: "#e2e8f0",
+            callbacks: {
+              label: (context) => `${context.label}: ${context.raw}%`,
+            },
           },
         },
         elements: { arc: { hoverOffset: 10 } },
       },
     });
-  }, []);
+  }, [moedas]);
 
   // Filtra apenas moedas com quantidade > 0
   const topCrypto = moedas.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0);
@@ -213,15 +242,15 @@ export default function Home() {
                 <ul style={{ listStyle: "none", padding: 0, margin: 0, textAlign: "left", marginLeft: "clamp(15px, 4vw, 20px)" }}>
                   <li style={{ position: "relative", paddingLeft: "25px", marginBottom: "8px", fontSize: "clamp(0.75em, 2.5vw, 0.85em)" }}>
                     <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "15px", height: "15px", borderRadius: "3px", backgroundColor: "#4CAF50" }}></span>
-                    70% - Maiores Criptomoedas do Mercado
+                    Top Criptomoedas
                   </li>
                   <li style={{ position: "relative", paddingLeft: "25px", marginBottom: "8px", fontSize: "clamp(0.75em, 2.5vw, 0.85em)" }}>
                     <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "15px", height: "15px", borderRadius: "3px", backgroundColor: "#FFC107" }}></span>
-                    20% - Maiores Memecoins do Mercado
+                    Memecoins
                   </li>
                   <li style={{ position: "relative", paddingLeft: "25px", marginBottom: "8px", fontSize: "clamp(0.75em, 2.5vw, 0.85em)" }}>
                     <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: "15px", height: "15px", borderRadius: "3px", backgroundColor: "#E91E63" }}></span>
-                    10% - Criptomoedas Novas / Comunidade
+                    Criptos Novas/Comunidade
                   </li>
                 </ul>
               </div>

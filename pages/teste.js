@@ -4,7 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 export default function Teste() {
   const [moedas, setMoedas] = useState();
   const INVESTMENTO_INICIAL = 100;
-
+  
   useEffect(() => {
     async function carregarDados() {
       try {
@@ -17,17 +17,19 @@ export default function Teste() {
     }
 
     carregarDados();
-  },);
+  }, );
 
   // Dados de exemplo para o gráfico de linha.
   // Você precisará de uma fonte de dados histórica para preencher isso.
   const performanceData =;
 
-  const topCrypto = moedas.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0);
-  const memecoins = moedas.filter((m) => m.categoria === "memecoin" && m.quantidade > 0);
+  const topCrypto = moedas?.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0) ||;
+  const memecoins = moedas?.filter((m) => m.categoria === "memecoin" && m.quantidade > 0) ||;
   const valorHoje = moedas
-  .reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0)
-  .toFixed(2);
+  ?.reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0)
+  ?.toFixed(2) |
+
+| "0.00";
   const resultadoTotal = (valorHoje - INVESTMENTO_INICIAL).toFixed(2);
   const aSerDistribuido = resultadoTotal > 0? (resultadoTotal * 0.5).toFixed(2) : "0.00";
 
@@ -131,27 +133,27 @@ export default function Teste() {
 
   const mobileStyles = `
     @media (max-width: 768px) {
-    .main-content {
+   .main-content {
         grid-template-columns: 1fr!important;
         gap: clamp(10px, 3vw, 15px)!important;
       }
-    .card {
+   .card {
         padding: clamp(10px, 3vw, 15px)!important;
       }
-    .table,.resultsTable {
+   .table,.resultsTable {
         font-size: clamp(0.7em, 2.2vw, 0.8em)!important;
       }
-    .th,.td {
+   .th,.td {
         padding: clamp(6px, 1.5vw, 8px)!important;
       }
-    .chartContainer {
+   .chartContainer {
         width: 90vw!important;
         height: 50vw!important;
       }
-    .container {
+   .container {
         width: 90vw!important;
       }
-    .btn {
+   .btn {
         padding: clamp(8px, 2.5vw, 10px) clamp(15px, 4vw, 20px)!important;
         font-size: clamp(0.8em, 2.5vw, 0.9em)!important;
       }

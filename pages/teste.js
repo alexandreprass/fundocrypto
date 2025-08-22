@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 // Import Chart.js and the financial plugin for candlestick charts
 import Chart from "chart.js/auto";
 import { Chart as ChartJS, registerables } from "chart.js";
-import { FinancialChart } from "@chartjs/chart-financial"; // Add this plugin
+import { FinancialChart } from "@chartjs/chart-financial"; // This requires installation
 
 // Register the financial plugin
 ChartJS.register(...registerables, FinancialChart);
@@ -103,11 +103,9 @@ export default function Home() {
         },
       },
     });
-  }, [moedas]); // Depend on moedas to re-render when data changes
+  }, [moedas]);
 
-  // Calculate total portfolio value (moved outside useEffect to avoid recalculation issues)
-  const topCrypto = moedas.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0);
-  const memecoins = moedas.filter((m) => m.categoria === "memecoin" && m.quantidade > 0);
+  // Calculate total portfolio value
   const valorHoje = moedas
     .reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0)
     .toFixed(2);
@@ -192,7 +190,7 @@ export default function Home() {
       color: "#0f172a",
       fontWeight: "bold",
       padding: "clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px)",
-      border: "none",
+      border: none,
       borderRadius: "50px",
       cursor: "pointer",
       textDecoration: "none",

@@ -357,17 +357,6 @@ export default function Home() {
             *Obs: 10% do portfólio será alocado em criptomoedas novas, com risco maior, sugeridas e votadas pela comunidade do fundo.
           </p>
 
-          <a
-            href="https://gmgn.ai/sol/address/FhJz4WazwT7jdhbb1cePiTMZBoKPHyCtYyX2rPr96qwV"
-            target="_blank"
-            style={styles.btn}
-            onMouseOver={(e) => (e.currentTarget.style = { ...styles.btn, ...styles.btnHover })}
-            onMouseOut={(e) => (e.currentTarget.style = styles.btn)}
-            className="btn"
-          >
-            VERIFICAR ALOCAÇÃO EM TEMPO REAL
-          </a>
-
           <footer style={{ marginTop: "clamp(20px, 5vw, 30px)", textAlign: "center", fontSize: "clamp(0.7em, 2.5vw, 0.8em)", color: "#64748b" }}>
             &copy; 2025 HODL. Todos os direitos reservados.
           </footer>

@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
+// Import Chart.js and the financial plugin for candlestick charts
 import Chart from "chart.js/auto";
+import { Chart as ChartJS, registerables } from "chart.js";
+import { FinancialChart } from "@chartjs/chart-financial"; // Add this plugin
+
+// Register the financial plugin
+ChartJS.register(...registerables, FinancialChart);
 
 export default function Home() {
   const [moedas, setMoedas] = useState([]);
@@ -22,7 +28,20 @@ export default function Home() {
 
   useEffect(() => {
     const ctx = document.getElementById("portfolioChart");
-    if (!ctx) return;
+    if (!ctx) {
+      console.error("Canvas element 'portfolioChart' not found");
+      return;
+    }
+
+    // Filtra moedas antes de criar o gráfico
+    const topCrypto = moedas.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0);
+    const memecoins = moedas.filter((m) => m.categoria === "memecoin" && m.quantidade > 0);
+
+    // Só cria o gráfico se houver dados
+    if (topCrypto.length === 0 && memecoins.length === 0) {
+      console.warn("No data available for candlestick chart");
+      return;
+    }
 
     // Combine topCrypto and memecoins for candlestick chart
     const allCoins = [...topCrypto, ...memecoins];
@@ -74,21 +93,21 @@ export default function Home() {
         scales: {
           x: {
             title: { display: true, text: "Criptomoedas", color: "#06b6d4" },
+            ticks: { font: { size: 10 } },
           },
           y: {
             title: { display: true, text: "Valor (BRL)", color: "#06b6d4" },
             beginAtZero: true,
+            ticks: { font: { size: 10 } },
           },
         },
       },
     });
-  }, [topCrypto, memecoins]);
+  }, [moedas]); // Depend on moedas to re-render when data changes
 
-  // Filtra apenas moedas com quantidade > 0
+  // Calculate total portfolio value (moved outside useEffect to avoid recalculation issues)
   const topCrypto = moedas.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0);
   const memecoins = moedas.filter((m) => m.categoria === "memecoin" && m.quantidade > 0);
-
-  // Calculate total portfolio value
   const valorHoje = moedas
     .reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0)
     .toFixed(2);

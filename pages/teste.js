@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Home() {
-  const [moedas, setMoedas] = useState([]);
+  const [moedas, setMoedas] = useState();
   const INVESTMENTO_INICIAL = 100;
-  const USD_TO_BRL_RATE = 5.5;
 
   useEffect(() => {
     async function carregarDados() {
@@ -18,26 +17,19 @@ export default function Home() {
     }
 
     carregarDados();
-  }, []);
+  },);
 
   // Dados de exemplo para o gráfico de linha.
   // Você precisará de uma fonte de dados histórica para preencher isso.
-  const performanceData = [
-    { name: 'Dia 1', valor: 100 },
-    { name: 'Dia 5', valor: 125 },
-    { name: 'Dia 10', valor: 110 },
-    { name: 'Dia 15', valor: 145 },
-    { name: 'Dia 20', valor: 135 },
-    { name: 'Hoje', valor: (moedas.reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0) * USD_TO_BRL_RATE) }
-  ];
+  const performanceData =;
 
   const topCrypto = moedas.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0);
   const memecoins = moedas.filter((m) => m.categoria === "memecoin" && m.quantidade > 0);
   const valorHoje = moedas
-    .reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0)
-    .toFixed(2);
+   .reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0)
+   .toFixed(2);
   const resultadoTotal = (valorHoje - INVESTMENTO_INICIAL).toFixed(2);
-  const aSerDistribuido = resultadoTotal > 0 ? (resultadoTotal * 0.5).toFixed(2) : "0.00";
+  const aSerDistribuido = resultadoTotal > 0? (resultadoTotal * 0.5).toFixed(2) : "0.00";
 
   const styles = {
     root: {
@@ -139,29 +131,29 @@ export default function Home() {
 
   const mobileStyles = `
     @media (max-width: 768px) {
-      .main-content {
-        grid-template-columns: 1fr !important;
-        gap: clamp(10px, 3vw, 15px) !important;
+     .main-content {
+        grid-template-columns: 1fr!important;
+        gap: clamp(10px, 3vw, 15px)!important;
       }
-      .card {
-        padding: clamp(10px, 3vw, 15px) !important;
+     .card {
+        padding: clamp(10px, 3vw, 15px)!important;
       }
-      .table, .resultsTable {
-        font-size: clamp(0.7em, 2.2vw, 0.8em) !important;
+     .table,.resultsTable {
+        font-size: clamp(0.7em, 2.2vw, 0.8em)!important;
       }
-      .th, .td {
-        padding: clamp(6px, 1.5vw, 8px) !important;
+     .th,.td {
+        padding: clamp(6px, 1.5vw, 8px)!important;
       }
-      .chartContainer {
-        width: 90vw !important;
-        height: 50vw !important;
+     .chartContainer {
+        width: 90vw!important;
+        height: 50vw!important;
       }
-      .container {
-        width: 90vw !important;
+     .container {
+        width: 90vw!important;
       }
-      .btn {
-        padding: clamp(8px, 2.5vw, 10px) clamp(15px, 4vw, 20px) !important;
-        font-size: clamp(0.8em, 2.5vw, 0.9em) !important;
+     .btn {
+        padding: clamp(8px, 2.5vw, 10px) clamp(15px, 4vw, 20px)!important;
+        font-size: clamp(0.8em, 2.5vw, 0.9em)!important;
       }
     }
   `;
@@ -177,7 +169,7 @@ export default function Home() {
           </header>
 
           <div className="main-content" style={{ display: "grid", gridTemplateColumns: "1fr", gap: "clamp(15px, 4vw, 20px)" }}>
-            <div style={{ ...styles.card, gridColumn: "1 / -1" }}>
+            <div style={{...styles.card, gridColumn: "1 / -1" }}>
               <h2 style={{ color: "#06b6d4", fontSize: "clamp(1.1em, 4vw, 1.4em)" }}>Desempenho do Portfólio</h2>
               <div style={styles.chartContainer} className="chartContainer">
                 <ResponsiveContainer width="100%" height="100%">
@@ -186,7 +178,7 @@ export default function Home() {
                     <XAxis dataKey="name" stroke="#93c5fd" />
                     <YAxis stroke="#93c5fd" />
                     <Tooltip 
-                      formatter={(value) => `R$ ${value.toFixed(2)}`} 
+                      formatter={(value) => `💲 ${value.toFixed(2)}`} 
                       contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
                       labelStyle={{ color: '#e2e8f0' }}
                     />
@@ -254,7 +246,7 @@ export default function Home() {
               </table>
             </div>
 
-            <div style={{ ...styles.card, gridColumn: "1 / -1" }}>
+            <div style={{...styles.card, gridColumn: "1 / -1" }}>
               <h2 style={{ color: "#06b6d4", fontSize: "clamp(1.1em, 4vw, 1.4em)" }}>Resumo Mensal</h2>
               <table style={styles.resultsTable}>
                 <thead>
@@ -274,7 +266,7 @@ export default function Home() {
                       <span>💲{valorHoje}</span>
                     </td>
                     <td style={styles.td}>
-                      <span style={{ color: resultadoTotal >= 0 ? "#4CAF50" : "#ff0000" }}>
+                      <span style={{ color: resultadoTotal >= 0? "#4CAF50" : "#ff0000" }}>
                         💲{resultadoTotal}
                       </span>
                     </td>
@@ -295,7 +287,7 @@ export default function Home() {
             href="https://gmgn.ai/sol/address/FhJz4WazwT7jdhbb1cePiTMZBoKPHyCtYyX2rPr96qwV"
             target="_blank"
             style={styles.btn}
-            onMouseOver={(e) => (e.currentTarget.style = { ...styles.btn, ...styles.btnHover })}
+            onMouseOver={(e) => (e.currentTarget.style = {...styles.btn,...styles.btnHover })}
             onMouseOut={(e) => (e.currentTarget.style = styles.btn)}
             className="btn"
           >

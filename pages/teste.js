@@ -1,13 +1,16 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HodlCoin - Miniapp</title>
-    <style>
+import Head from 'next/head';
+
+const TestePage = () => {
+  return (
+    <>
+      <Head>
+        <title>HodlCoin - Miniapp</title>
+      </Head>
+
+      <style jsx global>{`
         :root {
             --bg-color: #121212;
-            --primary-color: #00BFFF; /* Azul claro para modernidade */
+            --primary-color: #00BFFF;
             --text-color: #E0E0E0;
             --button-bg-color: #212121;
             --button-border-color: #333333;
@@ -28,7 +31,7 @@
         }
 
         .logo {
-            width: 150px; /* Ajuste o tamanho conforme necessário */
+            width: 150px;
             margin-bottom: 40px;
         }
 
@@ -66,7 +69,7 @@
         }
 
         .social-media {
-            margin-top: auto; /* Empurra para o final da página */
+            margin-top: auto;
             width: 100%;
             max-width: 400px;
             padding-top: 50px;
@@ -102,31 +105,33 @@
         .social-link:hover .social-icon {
             transform: scale(1.2);
         }
-    </style>
-</head>
-<body>
+      `}</style>
+      
+      <body>
+        <img src="/logo.png" alt="Logo HodlCoin" className="logo" />
 
-    <img src="logo.png" alt="Logo HodlCoin" class="logo">
-
-    <div class="button-section">
-        <a href="#" class="service-button">
-            <span class="emoji">💰</span> FUNDO CRYPTO
-        </a>
+        <div className="button-section">
+          <a href="#" className="service-button">
+            <span className="emoji">💰</span> FUNDO CRYPTO
+          </a>
         </div>
 
-    <div class="social-media">
-        <p class="social-media-title">Nossas Redes</p>
-        <div class="social-media-links">
-            <a href="https://t.me/+x8EDDJAWO2YwODVh" class="social-link" target="_blank">
-                <span class="social-icon">✈️</span>
-                Telegram
+        <div className="social-media">
+          <p className="social-media-title">Nossas Redes</p>
+          <div className="social-media-links">
+            <a href="https://t.me/+x8EDDJAWO2YwODVh" className="social-link" target="_blank" rel="noopener noreferrer">
+              <span className="social-icon">✈️</span>
+              Telegram
             </a>
-            <a href="https://x.com/hodlcoin_bnb" class="social-link" target="_blank">
-                <span class="social-icon">✖️</span>
-                X
+            <a href="https://x.com/hodlcoin_bnb" className="social-link" target="_blank" rel="noopener noreferrer">
+              <span className="social-icon">✖️</span>
+              X
             </a>
+          </div>
         </div>
-    </div>
+      </body>
+    </>
+  );
+};
 
-</body>
-</html>
+export default TestePage;

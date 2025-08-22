@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import Chart from "chart.js/auto";
-import { Chart as ChartJS, registerables } from "chart.js";
-import { CandlestickController } from "chartjs-chart-financial";
-
-ChartJS.register(...registerables, CandlestickController);
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Home() {
   const [moedas, setMoedas] = useState([]);
@@ -24,80 +20,16 @@ export default function Home() {
     carregarDados();
   }, []);
 
-  useEffect(() => {
-    const ctx = document.getElementById("portfolioChart");
-    if (!ctx) {
-      console.error("Canvas element 'portfolioChart' not found");
-      return;
-    }
-
-    const topCrypto = moedas.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0);
-    const memecoins = moedas.filter((m) => m.categoria === "memecoin" && m.quantidade > 0);
-
-    if (topCrypto.length === 0 && memecoins.length === 0) {
-      console.warn("No data available for candlestick chart");
-      return;
-    }
-
-    const allCoins = [...topCrypto, ...memecoins];
-    const chartData = allCoins.map((m) => {
-      const totalUSD = m.preco_atual_usd * m.quantidade;
-      const totalBRL = totalUSD * USD_TO_BRL_RATE;
-      const baseValue = totalBRL / 10;
-      return {
-        x: m.nome,
-        o: baseValue * 0.9,
-        h: baseValue * 1.1,
-        l: baseValue * 0.8,
-        c: baseValue,
-      };
-    });
-
-    new Chart(ctx, {
-      type: "candlestick",
-      data: {
-        datasets: [
-          {
-            label: "Valor em Reais (BRL)",
-            data: chartData,
-            borderColor: (context) => (context.raw.c > context.raw.o ? "#4CAF50" : "#E91E63"),
-            backgroundColor: (context) => (context.raw.c > context.raw.o ? "rgba(76, 175, 80, 0.5)" : "rgba(233, 30, 99, 0.5)"),
-            borderWidth: 2,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: "rgba(30, 41, 59, 0.9)",
-            titleColor: "#e2e8f0",
-            bodyColor: "#e2e8f0",
-            callbacks: {
-              label: (tooltipItem) => {
-                const coin = allCoins[tooltipItem.dataIndex];
-                const totalBRL = (coin.preco_atual_usd * coin.quantidade * USD_TO_BRL_RATE).toFixed(2);
-                return `${coin.nome}: R$ ${totalBRL}`;
-              },
-            },
-          },
-        },
-        scales: {
-          x: {
-            title: { display: true, text: "Criptomoedas", color: "#06b6d4" },
-            ticks: { font: { size: 10 } },
-          },
-          y: {
-            title: { display: true, text: "Valor (BRL)", color: "#06b6d4" },
-            beginAtZero: true,
-            ticks: { font: { size: 10 } },
-          },
-        },
-      },
-    });
-  }, [moedas]);
+  // Dados de exemplo para o gráfico de linha.
+  // Você precisará de uma fonte de dados histórica para preencher isso.
+  const performanceData = [
+    { name: 'Dia 1', valor: 100 },
+    { name: 'Dia 5', valor: 125 },
+    { name: 'Dia 10', valor: 110 },
+    { name: 'Dia 15', valor: 145 },
+    { name: 'Dia 20', valor: 135 },
+    { name: 'Hoje', valor: (moedas.reduce((acc, m) => acc + m.preco_atual_usd * m.quantidade, 0) * USD_TO_BRL_RATE) }
+  ];
 
   const topCrypto = moedas.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0);
   const memecoins = moedas.filter((m) => m.categoria === "memecoin" && m.quantidade > 0);
@@ -246,9 +178,21 @@ export default function Home() {
 
           <div className="main-content" style={{ display: "grid", gridTemplateColumns: "1fr", gap: "clamp(15px, 4vw, 20px)" }}>
             <div style={{ ...styles.card, gridColumn: "1 / -1" }}>
-              <h2 style={{ color: "#06b6d4", fontSize: "clamp(1.1em, 4vw, 1.4em)" }}>Distribuição do Portfólio</h2>
+              <h2 style={{ color: "#06b6d4", fontSize: "clamp(1.1em, 4vw, 1.4em)" }}>Desempenho do Portfólio</h2>
               <div style={styles.chartContainer} className="chartContainer">
-                <canvas id="portfolioChart"></canvas>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={performanceData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                    <XAxis dataKey="name" stroke="#93c5fd" />
+                    <YAxis stroke="#93c5fd" />
+                    <Tooltip 
+                      formatter={(value) => `R$ ${value.toFixed(2)}`} 
+                      contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
+                      labelStyle={{ color: '#e2e8f0' }}
+                    />
+                    <Line type="monotone" dataKey="valor" stroke="#06b6d4" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
 

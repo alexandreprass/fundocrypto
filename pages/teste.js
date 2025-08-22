@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
-// Import Chart.js and the financial plugin for candlestick charts
 import Chart from "chart.js/auto";
 import { Chart as ChartJS, registerables } from "chart.js";
-import { FinancialChart } from "@chartjs/chartjs-chart-financial"; // Correção no nome do pacote
+import { FinancialChart } from "@chartjs/chartjs-chart-financial"; // Correção na importação
 
-// Register the financial plugin
 ChartJS.register(...registerables, FinancialChart);
 
 export default function Home() {
   const [moedas, setMoedas] = useState([]);
-  const INVESTMENTO_INICIAL = 100; // Editable initial investment value in USD
-  const USD_TO_BRL_RATE = 5.5; // Hypothetical exchange rate for USD to BRL
+  const INVESTMENTO_INICIAL = 100;
+  const USD_TO_BRL_RATE = 5.5;
 
   useEffect(() => {
     async function carregarDados() {
@@ -33,29 +31,25 @@ export default function Home() {
       return;
     }
 
-    // Filtra moedas antes de criar o gráfico
     const topCrypto = moedas.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0);
     const memecoins = moedas.filter((m) => m.categoria === "memecoin" && m.quantidade > 0);
 
-    // Só cria o gráfico se houver dados
     if (topCrypto.length === 0 && memecoins.length === 0) {
       console.warn("No data available for candlestick chart");
       return;
     }
 
-    // Combine topCrypto and memecoins for candlestick chart
     const allCoins = [...topCrypto, ...memecoins];
-    const chartData = allCoins.map((m, i) => {
+    const chartData = allCoins.map((m) => {
       const totalUSD = m.preco_atual_usd * m.quantidade;
       const totalBRL = totalUSD * USD_TO_BRL_RATE;
-      // Approximate candlestick data: open, high, low, close based on total value
-      const baseValue = totalBRL / 10; // Normalize for chart height
+      const baseValue = totalBRL / 10;
       return {
-        x: m.nome, // Label on x-axis
-        o: baseValue * 0.9, // Open price (90% of base)
-        h: baseValue * 1.1, // High price (110% of base)
-        l: baseValue * 0.8, // Low price (80% of base)
-        c: baseValue, // Close price (base value)
+        x: m.nome,
+        o: baseValue * 0.9,
+        h: baseValue * 1.1,
+        l: baseValue * 0.8,
+        c: baseValue,
       };
     });
 
@@ -66,7 +60,7 @@ export default function Home() {
           {
             label: "Valor em Reais (BRL)",
             data: chartData,
-            borderColor: (context) => (context.raw.c > context.raw.o ? "#4CAF50" : "#E91E63"), // Green for up, red for down
+            borderColor: (context) => (context.raw.c > context.raw.o ? "#4CAF50" : "#E91E63"),
             backgroundColor: (context) => (context.raw.c > context.raw.o ? "rgba(76, 175, 80, 0.5)" : "rgba(233, 30, 99, 0.5)"),
             borderWidth: 2,
           },
@@ -105,7 +99,6 @@ export default function Home() {
     });
   }, [moedas]);
 
-  // Calculate total portfolio value
   const topCrypto = moedas.filter((m) => m.categoria === "top_crypto" && m.quantidade > 0);
   const memecoins = moedas.filter((m) => m.categoria === "memecoin" && m.quantidade > 0);
   const valorHoje = moedas
@@ -261,98 +254,92 @@ export default function Home() {
 
             <div style={styles.card}>
               <h2 style={{ fontSize: "clamp(1.1em, 4vw, 1.4em)" }}>🏆 Top Criptomoedas (70% Alocação)</h2>
-              <div style={styles.tableContainer}>
-                <table style={styles.table} className="table">
-                  <thead>
-                    <tr>
-                      <th style={styles.th}>#</th>
-                      <th style={styles.th}>Criptomoeda</th>
-                      <th style={styles.th}>Dados</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {topCrypto.map((m, i) => {
-                      const total = (m.preco_atual_usd * m.quantidade).toFixed(2);
-                      return (
-                        <tr key={m.id}>
-                          <td style={styles.td}>{i + 1}</td>
-                          <td style={styles.td}>{m.nome} ({m.simbolo})</td>
-                          <td style={styles.td}>
-                            <span style={{ color: "#ffffff" }}>💲 {m.preco_atual_usd.toFixed(4)}</span> |{" "}
-                            <span style={{ color: "#d1d5db" }}>Qtde: {m.quantidade}</span> |{" "}
-                            <span style={{ color: "#4CAF50" }}>Total: 💲{total}</span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              <table style={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>#</th>
+                    <th style={styles.th}>Criptomoeda</th>
+                    <th style={styles.th}>Dados</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {topCrypto.map((m, i) => {
+                    const total = (m.preco_atual_usd * m.quantidade).toFixed(2);
+                    return (
+                      <tr key={m.id}>
+                        <td style={styles.td}>{i + 1}</td>
+                        <td style={styles.td}>{m.nome} ({m.simbolo})</td>
+                        <td style={styles.td}>
+                          <span style={{ color: "#ffffff" }}>💲 {m.preco_atual_usd.toFixed(4)}</span> | 
+                          <span style={{ color: "#d1d5db" }}>Qtde: {m.quantidade}</span> | 
+                          <span style={{ color: "#4CAF50" }}>Total: 💲{total}</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
 
             <div style={styles.card}>
               <h2 style={{ fontSize: "clamp(1.1em, 4vw, 1.4em)" }}>🐶 Maiores Memecoins (20% Alocação)</h2>
-              <div style={styles.tableContainer}>
-                <table style={styles.table} className="table">
-                  <thead>
-                    <tr>
-                      <th style={styles.th}>#</th>
-                      <th style={styles.th}>Memecoin</th>
-                      <th style={styles.th}>Dados</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {memecoins.map((m, i) => {
-                      const total = (m.preco_atual_usd * m.quantidade).toFixed(2);
-                      return (
-                        <tr key={m.id}>
-                          <td style={styles.td}>{i + 1}</td>
-                          <td style={styles.td}>{m.nome} ({m.simbolo})</td>
-                          <td style={styles.td}>
-                            <span style={{ color: "#ffffff" }}>💲 {m.preco_atual_usd.toFixed(8)}</span> |{" "}
-                            <span style={{ color: "#d1d5db" }}>Qtde: {m.quantidade}</span> |{" "}
-                            <span style={{ color: "#4CAF50" }}>Total: 💲{total}</span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              <table style={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>#</th>
+                    <th style={styles.th}>Memecoin</th>
+                    <th style={styles.th}>Dados</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {memecoins.map((m, i) => {
+                    const total = (m.preco_atual_usd * m.quantidade).toFixed(2);
+                    return (
+                      <tr key={m.id}>
+                        <td style={styles.td}>{i + 1}</td>
+                        <td style={styles.td}>{m.nome} ({m.simbolo})</td>
+                        <td style={styles.td}>
+                          <span style={{ color: "#ffffff" }}>💲 {m.preco_atual_usd.toFixed(8)}</span> | 
+                          <span style={{ color: "#d1d5db" }}>Qtde: {m.quantidade}</span> | 
+                          <span style={{ color: "#4CAF50" }}>Total: 💲{total}</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
 
             <div style={{ ...styles.card, gridColumn: "1 / -1" }}>
               <h2 style={{ color: "#06b6d4", fontSize: "clamp(1.1em, 4vw, 1.4em)" }}>Resumo Mensal</h2>
-              <div style={styles.tableContainer}>
-                <table style={styles.resultsTable} className="table">
-                  <thead>
-                    <tr>
-                      <th style={styles.th}>Investimento</th>
-                      <th style={styles.th}>Valor Hoje</th>
-                      <th style={styles.th}>Resultado Total</th>
-                      <th style={styles.th}>A Ser Distribuído</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td style={styles.td}>
-                        <span style={{ color: "#ff0000" }}>💲{INVESTMENTO_INICIAL.toFixed(2)}</span>
-                      </td>
-                      <td style={styles.td}>
-                        <span>💲{valorHoje}</span>
-                      </td>
-                      <td style={styles.td}>
-                        <span style={{ color: resultadoTotal >= 0 ? "#4CAF50" : "#ff0000" }}>
-                          💲{resultadoTotal}
-                        </span>
-                      </td>
-                      <td style={styles.td}>
-                        <span style={{ color: "#4CAF50" }}>💲{aSerDistribuido}</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <table style={styles.resultsTable}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>Investimento</th>
+                    <th style={styles.th}>Valor Hoje</th>
+                    <th style={styles.th}>Resultado Total</th>
+                    <th style={styles.th}>A Ser Distribuído</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style={styles.td}>
+                      <span style={{ color: "#ff0000" }}>💲{INVESTMENTO_INICIAL.toFixed(2)}</span>
+                    </td>
+                    <td style={styles.td}>
+                      <span>💲{valorHoje}</span>
+                    </td>
+                    <td style={styles.td}>
+                      <span style={{ color: resultadoTotal >= 0 ? "#4CAF50" : "#ff0000" }}>
+                        💲{resultadoTotal}
+                      </span>
+                    </td>
+                    <td style={styles.td}>
+                      <span style={{ color: "#4CAF50" }}>💲{aSerDistribuido}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 

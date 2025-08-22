@@ -115,7 +115,7 @@ const TestePage = () => {
         <img src="/logo.png" alt="Logo HodlCoin" className="logo" />
 
         <div className="button-section">
-          <a href="https://fundocrypto.vercel.app/..." className="service-button">
+          <a href="https://fundocrypto.vercel.app" className="service-button">
             <img src="/carteira.png" alt="Carteira" /> FUNDO CRYPTO
           </a>
           <a href="https://hodlcoin.vercel.app/pix" className="service-button">
